@@ -77,5 +77,7 @@ Splitting bills manually is tedious and error-prone. I wanted to create somethin
 ---
 
 **Built by:** Zaid Nimer
+
 **Contact:** [z.nimer@outlook.com]
+
 **Portfolio:** [https://www.linkedin.com/in/zaid-nimer/]
