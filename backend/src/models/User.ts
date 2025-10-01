@@ -1,4 +1,3 @@
-import { error } from 'console';
 import mongoose, {Document, Schema} from 'mongoose';
 
 // shape of user document
