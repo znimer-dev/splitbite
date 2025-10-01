@@ -65,7 +65,7 @@ npm run dev
 
 ## Why I Built This
 
-Splitting bills manually is tedious and error-prone. I wanted to create something that "just works" - snap a photo, get accurate results instantly. The challenge was building a robust processing pipeline that handles real-world receipt variations while maintaining fast performance.
+Splitting bills manually is tedious and error-prone. I wanted to create something that's seamless, snap a photo, get accurate results instantly. Not only that, but this is my first true full stack project, a big challenge was learning as I was going, and debugging problems I've never encountered before.
 
 ## What's Next
 
@@ -76,6 +76,6 @@ Splitting bills manually is tedious and error-prone. I wanted to create somethin
 
 ---
 
-**Built by:** Zaid Nimri
-**Contact:** [Your Email/LinkedIn]
-**Portfolio:** [Your Portfolio Link]
+**Built by:** Zaid Nimer
+**Contact:** [z.nimer@outlook.com]
+**Portfolio:** [https://www.linkedin.com/in/zaid-nimer/]
