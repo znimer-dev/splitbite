@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SplitBite - Smart Receipt Splitting</title>
+    <link rel="stylesheet" href="css/style.css?v=2025093004">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">🍽️ SplitBite</h1>
+            <nav class="nav">
+                <button id="loginBtn" class="nav-btn">Login</button>
+                <button id="signupBtn" class="nav-btn">Sign Up</button>
+                <button id="logoutBtn" class="nav-btn hidden">Logout</button>
+            </nav>
+        </header>
+
+        <!-- Landing Page -->
+        <section id="landing" class="section">
+            <div class="hero">
+                <h2>Split Your Bills</h2>
+                <p>Upload receipt photos and automatically split the costs between friends</p>
+                <button id="getStartedBtn" class="cta-btn">Get Started</button>
+            </div>
+        </section>
+
+        <!-- Login Form -->
+        <section id="loginSection" class="section hidden">
+            <div class="form-container">
+                <h2>Login to SplitBite</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="form-btn">Login</button>
+                </form>
+                <p class="form-switch">Don't have an account? <a href="#" id="switchToSignup">Sign up</a></p>
+            </div>
+        </section>
+
+        <!-- Signup Form -->
+        <section id="signupSection" class="section hidden">
+            <div class="form-container">
+                <h2>Create Account</h2>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" required minlength="6">
+                    </div>
+                    <button type="submit" class="form-btn">Create Account</button>
+                </form>
+                <p class="form-switch">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+            </div>
+        </section>
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="section hidden">
+            <div class="dashboard-header">
+                <h2>Welcome, <span id="userName">User</span>!</h2>
+                <button id="uploadBtn" class="cta-btn">Upload Receipt</button>
+            </div>
+
+            <!-- Upload Form -->
+            <div id="uploadSection" class="upload-section hidden">
+                <div class="upload-container">
+                    <h3>Upload Receipt</h3>
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="file-upload">
+                            <input type="file" id="receiptFile" accept=".png,.jpg,.jpeg" required>
+                            <label for="receiptFile" class="file-label">
+                                <span class="file-icon">📄</span>
+                                <span class="file-text">Choose receipt image (PNG, JPG)</span>
+                            </label>
+                        </div>
+                        <div class="upload-actions">
+                            <button type="submit" class="form-btn">Upload & Process</button>
+                            <button type="button" id="cancelUpload" class="cancel-btn">Cancel</button>
+                        </div>
+                    </form>
+                    <div id="uploadProgress" class="hidden">
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <p>Processing receipt...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tabs -->
+            <div class="dashboard-tabs">
+                <button id="receiptsTab" class="tab-btn active" onclick="showDashboardTab('receipts')">
+                    📄 Your Receipts
+                </button>
+                <button id="historyTab" class="tab-btn" onclick="showDashboardTab('history')">
+                    🏪 Restaurant History
+                </button>
+            </div>
+
+            <!-- Receipts Tab Content -->
+            <div id="receiptsTabContent" class="tab-content active">
+                <div class="receipts-section">
+                    <div class="section-header">
+                        <h3>Your Receipts</h3>
+                        <p class="section-description">Upload receipts, split bills with friends, and track your spending</p>
+                    </div>
+                    <div id="receiptsList" class="receipts-grid">
+                        <!-- Receipts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Restaurant History Tab Content -->
+            <div id="historyTabContent" class="tab-content hidden">
+                <div class="restaurants-section">
+                    <div class="section-header">
+                        <h3>Restaurant History</h3>
+                        <p class="section-description">Track your personal spending at each restaurant over time</p>
+                    </div>
+                    <div class="history-filters">
+                        <button class="filter-btn active" onclick="filterHistory('all')">All Restaurants</button>
+                        <button class="filter-btn" onclick="filterHistory('favorites')">❤️ Favorites</button>
+                    </div>
+                    <div class="history-actions">
+                        <button class="btn-secondary" onclick="exportRestaurantHistory()">📊 Export Data</button>
+                        <button class="btn-primary" onclick="recalculateRestaurantTotals()">🔄 Fix Totals</button>
+                        <button class="btn-danger" onclick="clearAllRestaurants()">🗑️ Clear All History</button>
+                    </div>
+                    <div id="restaurantsList" class="restaurants-grid">
+                        <!-- Restaurants will be loaded here -->
+                    </div>
+
+                    <!-- Individual Visits Section -->
+                    <div id="restaurantVisits" class="restaurant-visits-section hidden">
+                        <div class="visits-header">
+                            <button class="btn-secondary" onclick="hideRestaurantVisits()">← Back to Restaurants</button>
+                            <h4 id="visitsRestaurantName">Restaurant Visits</h4>
+                        </div>
+                        <div id="visitsList" class="visits-grid">
+                            <!-- Individual visits will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="receiptDetails">
+                <!-- Receipt details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bill Splitting Modal -->
+    <div id="splitModal" class="modal hidden">
+        <div class="modal-content large">
+            <span class="close" id="closeSplitModal">&times;</span>
+            <div id="splitContent">
+                <h2>Split Bill - <span id="splitRestaurantName"></span></h2>
+
+                <!-- Step 1: Add People -->
+                <div id="peopleStep" class="split-step">
+                    <h3>👥 Who was dining?</h3>
+                    <div class="people-input">
+                        <input type="text" id="personNameInput" placeholder="Enter person's name">
+                        <input type="email" id="personEmailInput" placeholder="Email (optional)">
+                        <button id="addPersonBtn" class="btn-secondary">Add Person</button>
+                    </div>
+                    <div id="peopleList" class="people-list">
+                        <!-- Added people will appear here -->
+                    </div>
+                    <button id="continueToItemsBtn" class="btn-primary" disabled>Continue to Items</button>
+                </div>
+
+                <!-- Step 2: Choose Split Method -->
+                <div id="itemsStep" class="split-step hidden">
+                    <h3>💰 Choose Split Method</h3>
+                    <div class="split-method-selector">
+                        <div class="method-option">
+                            <input type="radio" id="itemMethod" name="splitMethod" value="items" checked>
+                            <label for="itemMethod">
+                                <h4>🍽️ Split by Items</h4>
+                                <p>Assign specific items to each person</p>
+                            </label>
+                        </div>
+                        <div class="method-option">
+                            <input type="radio" id="percentageMethod" name="splitMethod" value="percentage">
+                            <label for="percentageMethod">
+                                <h4>📊 Split by Percentage</h4>
+                                <p>Each person pays a percentage of the total bill</p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="split-controls">
+                        <div class="distribution-controls">
+                            <label>Tax Distribution:</label>
+                            <select id="taxDistribution">
+                                <option value="proportional">Proportional to order</option>
+                                <option value="equal">Split equally</option>
+                            </select>
+                            <label>Tip Distribution:</label>
+                            <select id="tipDistribution">
+                                <option value="proportional">Proportional to order</option>
+                                <option value="equal">Split equally</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Items Assignment (shown when item method is selected) -->
+                    <div id="itemsAssignment" class="split-content">
+                        <h4>🍽️ Assign items to people</h4>
+                        <div class="items-assignment">
+                            <div id="itemsList" class="items-list">
+                                <!-- Items will be loaded here -->
+                            </div>
+                            <div class="people-columns" id="peopleColumns">
+                                <!-- People columns for drag & drop -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Percentage Assignment (shown when percentage method is selected) -->
+                    <div id="percentageAssignment" class="split-content hidden">
+                        <h4>📊 Set percentage for each person</h4>
+                        <div id="percentageControls" class="percentage-controls">
+                            <!-- Percentage sliders will be loaded here -->
+                        </div>
+                        <div class="percentage-summary">
+                            <div class="total-percentage">
+                                Total: <span id="totalPercentage">0</span>%
+                            </div>
+                            <div class="remaining-amount">
+                                Remaining: $<span id="remainingAmount">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="calculateSplitBtn" class="btn-primary">Calculate Split</button>
+                </div>
+
+                <!-- Step 3: View Split Results -->
+                <div id="resultsStep" class="split-step hidden">
+                    <h3>💰 Split Results</h3>
+                    <div id="splitResults" class="split-results">
+                        <!-- Split calculations will appear here -->
+                    </div>
+                    <div class="split-actions">
+                        <button id="exportSummaryBtn" class="btn-secondary">Export Summary</button>
+                        <button id="shareSplitBtn" class="btn-primary">Share Split</button>
+                        <button id="saveSplitBtn" class="btn-success">Save Split</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="spinner hidden">
+        <div class="spinner-circle"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="js/dist/app.js?v=2025093004"></script>
+</body>
+</html>

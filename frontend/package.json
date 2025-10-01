@@ -1,0 +1,13 @@
+{
+  "name": "splitbite-frontend",
+  "version": "1.0.0",
+  "description": "SplitBite Frontend TypeScript",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf js/dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
