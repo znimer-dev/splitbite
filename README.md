@@ -1,16 +1,16 @@
 # 🍽️ SplitBite
 
-**AI-powered receipt splitting that actually works.** Upload a receipt photo, let AI extract the items, and split costs instantly with friends.
+**Smart receipt splitting that actually works.** Upload a receipt photo, automatically extract items, and split costs instantly with friends.
 
 ## 🚀 [Live Demo](#)
 *Link will be updated once deployed*
 
 ## What I Built
 
-I developed SplitBite as a full-stack solution to solve the annoying problem of splitting restaurant bills. Instead of manually calculating who ordered what, users simply snap a photo and let AI handle the heavy lifting.
+I developed SplitBite as a full-stack solution to solve the annoying problem of splitting restaurant bills. Instead of manually calculating who ordered what, users simply snap a photo and get instant, accurate item extraction and cost splitting.
 
 **Key Features:**
-- 📱 **Smart Receipt Scanning** - AWS Textract + OpenAI for accurate item extraction
+- 📱 **Automated Receipt Scanning** - OCR technology for accurate item extraction
 - 👥 **Effortless Bill Splitting** - Assign items to people, auto-calculate totals with tax/tip
 - 🔐 **Secure User System** - JWT authentication with bcrypt password hashing
 - 📊 **Receipt History** - Track spending patterns and restaurant visits
@@ -18,18 +18,18 @@ I developed SplitBite as a full-stack solution to solve the annoying problem of 
 
 ## Tech Stack
 
-**Frontend:** Vanilla JavaScript, HTML5, CSS3 (responsive design)
+**Frontend:** TypeScript, HTML5, CSS3 (responsive design)
 **Backend:** Node.js, TypeScript, Express.js
 **Database:** MongoDB with Mongoose ODM
-**AI/ML:** AWS Textract (OCR), OpenAI GPT-4 (text parsing)
+**Processing:** AWS Textract (OCR), OpenAI (text parsing)
 **Storage:** AWS S3 for receipt images
 **Auth:** JWT tokens with secure session management
 
 ## Architecture Highlights
 
-- **Microservices approach** with separate services for S3, Textract, OpenAI, and split calculations
-- **Robust error handling** with fallback parsing when AI services fail
-- **RESTful API design** with proper HTTP status codes and validation
+- **Service-oriented design** with separate modules for S3, OCR, text parsing, and split calculations
+- **Robust error handling** with fallback parsing when cloud services fail
+- **RESTful API design** with proper HTTP status codes and input validation
 - **Environment-based configuration** for seamless dev/prod deployment
 - **Scalable file storage** with signed URLs for secure image access
 
@@ -45,27 +45,27 @@ npm run dev
 
 ## Key Implementation Details
 
-**AI Processing Pipeline:**
+**Receipt Processing Pipeline:**
 1. AWS Textract extracts raw text from receipt images
-2. OpenAI GPT-4 intelligently parses text into structured data
+2. OpenAI parses text into structured data (restaurant, items, prices)
 3. Custom algorithms handle tax/tip distribution and splitting logic
-4. Fallback to regex-based parsing if AI services fail
+4. Fallback to regex-based parsing for reliability
 
 **Database Design:**
 - User authentication with salted password hashing
 - Receipt documents with embedded item arrays and split calculations
 - Restaurant history tracking for spending analytics
-- Optimized queries with proper indexing
+- Database indexing for optimized queries
 
-**Security Features:**
-- Input validation and sanitization
-- Rate limiting and file upload restrictions
+**Security & Infrastructure:**
+- File upload restrictions (type and size validation)
 - Secure environment variable management
 - CORS configuration for cross-origin requests
+- Input validation on all API endpoints
 
 ## Why I Built This
 
-Splitting bills manually is tedious and error-prone. I wanted to create something that "just works" - snap a photo, get accurate results instantly. The challenge was building a robust AI pipeline that handles real-world receipt variations while maintaining fast performance.
+Splitting bills manually is tedious and error-prone. I wanted to create something that "just works" - snap a photo, get accurate results instantly. The challenge was building a robust processing pipeline that handles real-world receipt variations while maintaining fast performance.
 
 ## What's Next
 
