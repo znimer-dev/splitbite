@@ -7,7 +7,7 @@
     "watch": "tsc --watch",
     "clean": "rm -rf js/dist"
   },
-  "devDependencies": {
+  "dependencies": {
     "typescript": "^5.9.2"
   }
 }
