@@ -19,7 +19,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from frontend
-app.use(express.static(path.join(__dirname, '../../frontend')));
+const frontendPath = path.join(__dirname, '../../frontend');
+console.log('📁 Serving static files from:', frontendPath);
+console.log('📁 Frontend path exists:', require('fs').existsSync(frontendPath));
+app.use(express.static(frontendPath));
 
 // MongoDB connection function
 const connectDB = async (): Promise<void> => {
@@ -43,6 +46,36 @@ app.get('/', (req: Request, res: Response) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/receipts', receiptRoutes);
+
+// Debug route to check file structure
+app.get('/debug/files', (req: Request, res: Response) => {
+  const fs = require('fs');
+  const frontendPath = path.join(__dirname, '../../frontend');
+  const jsPath = path.join(frontendPath, 'js/dist/app.js');
+
+  let fileInfo = {
+    frontendPathExists: fs.existsSync(frontendPath),
+    frontendPath: frontendPath,
+    jsFileExists: fs.existsSync(jsPath),
+    jsPath: jsPath,
+    frontendContents: fs.existsSync(frontendPath) ? fs.readdirSync(frontendPath) : 'Path does not exist',
+    jsDistContents: fs.existsSync(path.join(frontendPath, 'js/dist')) ? fs.readdirSync(path.join(frontendPath, 'js/dist')) : 'js/dist does not exist'
+  };
+
+  res.json(fileInfo);
+});
+
+// Specific route for JavaScript file (debugging)
+app.get('/js/dist/app.js', (req: Request, res: Response) => {
+  const jsPath = path.join(__dirname, '../../frontend/js/dist/app.js');
+  console.log('🔍 JS file requested, path:', jsPath);
+  console.log('🔍 JS file exists:', require('fs').existsSync(jsPath));
+  if (require('fs').existsSync(jsPath)) {
+    res.sendFile(jsPath);
+  } else {
+    res.status(404).send('JavaScript file not found');
+  }
+});
 
 // Health check endpoint
 app.get('/health', async (req: Request, res: Response) => {
