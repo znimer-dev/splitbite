@@ -343,211 +343,8 @@ async function deleteReceipt(receiptId: string): Promise<{success: boolean; mess
     });
 }
 
-// Event Handlers
-buttons.getStarted.addEventListener('click', () => {
-    showSection('signupSection');
-});
-
-buttons.login.addEventListener('click', () => {
-    showSection('loginSection');
-});
-
-buttons.signup.addEventListener('click', () => {
-    showSection('signupSection');
-});
-
-buttons.switchToSignup.addEventListener('click', (e: Event) => {
-    e.preventDefault();
-    showSection('signupSection');
-});
-
-buttons.switchToLogin.addEventListener('click', (e: Event) => {
-    e.preventDefault();
-    showSection('loginSection');
-});
-
-buttons.logout.addEventListener('click', () => {
-    currentUser = null;
-    localStorage.removeItem('splitbite_user');
-    updateNavigation();
-    showSection('landing');
-    showToast('Logged out successfully', 'success');
-});
-
-buttons.upload.addEventListener('click', () => {
-    // Reset the form and file input when opening upload section
-    forms.upload.reset();
-    resetFileLabel();
-
-    // Hide upload progress
-    elements.uploadProgress.classList.add('hidden');
-
-    // Show upload section
-    elements.uploadSection.classList.remove('hidden');
-});
-
-buttons.cancelUpload.addEventListener('click', () => {
-    elements.uploadSection.classList.add('hidden');
-    forms.upload.reset();
-    resetFileLabel();
-
-    // Hide upload progress if visible
-    elements.uploadProgress.classList.add('hidden');
-});
-
-// Form Handlers
-forms.signup.addEventListener('submit', async (e: Event) => {
-    e.preventDefault();
-
-    const nameInput = document.getElementById('signupName') as HTMLInputElement;
-    const emailInput = document.getElementById('signupEmail') as HTMLInputElement;
-    const passwordInput = document.getElementById('signupPassword') as HTMLInputElement;
-
-    const name = nameInput.value;
-    const email = emailInput.value;
-    const password = passwordInput.value;
-
-    try {
-        showLoading();
-        const result = await signup(name, email, password);
-
-        currentUser = {
-            id: result.user.id,
-            name: result.user.name,
-            email: result.user.email,
-            token: result.token,
-            createdAt: result.user.createdAt
-        };
-
-        localStorage.setItem('splitbite_user', JSON.stringify(currentUser));
-        updateNavigation();
-        showSection('dashboard');
-        loadDashboard();
-        showToast('Account created successfully!', 'success');
-    } catch (error) {
-        showToast((error as Error).message, 'error');
-    } finally {
-        hideLoading();
-    }
-});
-
-forms.login.addEventListener('submit', async (e: Event) => {
-    e.preventDefault();
-
-    const emailInput = document.getElementById('loginEmail') as HTMLInputElement;
-    const passwordInput = document.getElementById('loginPassword') as HTMLInputElement;
-
-    const email = emailInput.value;
-    const password = passwordInput.value;
-
-    try {
-        showLoading();
-        const result = await login(email, password);
-
-        currentUser = {
-            id: result.user.id,
-            name: result.user.name,
-            email: result.user.email,
-            token: result.token,
-            createdAt: result.user.createdAt
-        };
-
-        localStorage.setItem('splitbite_user', JSON.stringify(currentUser));
-        updateNavigation();
-        showSection('dashboard');
-        loadDashboard();
-        showToast('Logged in successfully!', 'success');
-    } catch (error) {
-        showToast((error as Error).message, 'error');
-    } finally {
-        hideLoading();
-    }
-});
-
 // Global flag to prevent double submissions
 let isUploading = false;
-
-forms.upload.addEventListener('submit', async (e: Event) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    console.log('Form submit triggered, isUploading:', isUploading);
-
-    // Prevent double submissions
-    if (isUploading) {
-        console.log('Upload already in progress, ignoring');
-        return;
-    }
-
-    const fileInput = document.getElementById('receiptFile') as HTMLInputElement;
-    const file = fileInput.files?.[0];
-
-    console.log('Form submitted, file:', file);
-
-    if (!file) {
-        showToast('Please select a file first', 'error');
-        return;
-    }
-
-    // Validate file type
-    const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg'];
-    if (!allowedTypes.includes(file.type)) {
-        showToast('Please select a PNG or JPG image', 'error');
-        return;
-    }
-
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-        showToast('File too large. Please select a file under 10MB', 'error');
-        return;
-    }
-
-    try {
-        isUploading = true;
-        console.log('Starting upload for file:', file.name);
-        elements.uploadProgress.classList.remove('hidden');
-
-        // Disable submit button to prevent multiple clicks
-        const submitBtn = forms.upload.querySelector('button[type="submit"]') as HTMLButtonElement;
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Uploading...';
-        }
-
-        const result = await uploadReceipt(file);
-
-        showToast('Receipt uploaded and processed successfully!', 'success');
-        elements.uploadSection.classList.add('hidden');
-
-        // Reset form and file input
-        forms.upload.reset();
-        resetFileLabel();
-
-        // Re-enable submit button
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Upload & Process';
-        }
-
-        // Refresh the lists
-        await loadReceipts();
-        await loadRestaurants();
-    } catch (error) {
-        console.error('Upload error:', error);
-        showToast((error as Error).message, 'error');
-
-        // Re-enable submit button on error
-        const submitBtn = forms.upload.querySelector('button[type="submit"]') as HTMLButtonElement;
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Upload & Process';
-        }
-    } finally {
-        isUploading = false;
-        elements.uploadProgress.classList.add('hidden');
-    }
-});
 
 // Bill Splitting State
 let currentReceipt: Receipt | null = null;
@@ -2075,16 +1872,6 @@ async function showReceiptDetails(receiptId: string): Promise<void> {
 // Make function global for onclick handlers
 (window as any).showReceiptDetails = showReceiptDetails;
 
-// Modal Close Handler
-document.querySelector('.close')?.addEventListener('click', () => {
-    elements.receiptModal.classList.add('hidden');
-});
-
-elements.receiptModal.addEventListener('click', (e: Event) => {
-    if (e.target === elements.receiptModal) {
-        elements.receiptModal.classList.add('hidden');
-    }
-});
 
 // File Upload Visual Feedback - moved to DOMContentLoaded to prevent duplication
 
@@ -2114,6 +1901,209 @@ function initApp(): void {
 
 // Split Modal Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+    // Main navigation event handlers
+    buttons.getStarted?.addEventListener('click', () => {
+        showSection('signupSection');
+    });
+
+    buttons.login?.addEventListener('click', () => {
+        showSection('loginSection');
+    });
+
+    buttons.signup?.addEventListener('click', () => {
+        showSection('signupSection');
+    });
+
+    buttons.switchToSignup?.addEventListener('click', (e: Event) => {
+        e.preventDefault();
+        showSection('signupSection');
+    });
+
+    buttons.switchToLogin?.addEventListener('click', (e: Event) => {
+        e.preventDefault();
+        showSection('loginSection');
+    });
+
+    buttons.logout?.addEventListener('click', () => {
+        currentUser = null;
+        localStorage.removeItem('splitbite_user');
+        updateNavigation();
+        showSection('landing');
+        showToast('Logged out successfully', 'success');
+    });
+
+    buttons.upload?.addEventListener('click', () => {
+        // Reset the form and file input when opening upload section
+        forms.upload?.reset();
+        resetFileLabel();
+
+        // Hide upload progress
+        elements.uploadProgress?.classList.add('hidden');
+
+        // Show upload section
+        elements.uploadSection?.classList.remove('hidden');
+    });
+
+    buttons.cancelUpload?.addEventListener('click', () => {
+        elements.uploadSection?.classList.add('hidden');
+        forms.upload?.reset();
+        resetFileLabel();
+
+        // Hide upload progress if visible
+        elements.uploadProgress?.classList.add('hidden');
+    });
+
+    // Form Handlers
+    forms.signup?.addEventListener('submit', async (e: Event) => {
+        e.preventDefault();
+
+        const nameInput = document.getElementById('signupName') as HTMLInputElement;
+        const emailInput = document.getElementById('signupEmail') as HTMLInputElement;
+        const passwordInput = document.getElementById('signupPassword') as HTMLInputElement;
+
+        const name = nameInput.value;
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        try {
+            showLoading();
+            const result = await signup(name, email, password);
+
+            currentUser = {
+                id: result.user.id,
+                name: result.user.name,
+                email: result.user.email,
+                token: result.token,
+                createdAt: result.user.createdAt
+            };
+
+            localStorage.setItem('splitbite_user', JSON.stringify(currentUser));
+            updateNavigation();
+            showSection('dashboard');
+            loadDashboard();
+            showToast('Account created successfully!', 'success');
+        } catch (error) {
+            showToast((error as Error).message, 'error');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    forms.login?.addEventListener('submit', async (e: Event) => {
+        e.preventDefault();
+
+        const emailInput = document.getElementById('loginEmail') as HTMLInputElement;
+        const passwordInput = document.getElementById('loginPassword') as HTMLInputElement;
+
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        try {
+            showLoading();
+            const result = await login(email, password);
+
+            currentUser = {
+                id: result.user.id,
+                name: result.user.name,
+                email: result.user.email,
+                token: result.token,
+                createdAt: result.user.createdAt
+            };
+
+            localStorage.setItem('splitbite_user', JSON.stringify(currentUser));
+            updateNavigation();
+            showSection('dashboard');
+            loadDashboard();
+            showToast('Logged in successfully!', 'success');
+        } catch (error) {
+            showToast((error as Error).message, 'error');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    forms.upload?.addEventListener('submit', async (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log('Form submit triggered, isUploading:', isUploading);
+
+        // Prevent double submissions
+        if (isUploading) {
+            console.log('Upload already in progress, ignoring');
+            return;
+        }
+
+        const fileInput = document.getElementById('receiptFile') as HTMLInputElement;
+        const file = fileInput.files?.[0];
+
+        console.log('Form submitted, file:', file);
+
+        if (!file) {
+            showToast('Please select a file first', 'error');
+            return;
+        }
+
+        // Validate file type
+        const allowedTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+        if (!allowedTypes.includes(file.type)) {
+            showToast('Please select a PNG or JPG image', 'error');
+            return;
+        }
+
+        // Validate file size (max 10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (file.size > maxSize) {
+            showToast('File too large. Please select a file under 10MB', 'error');
+            return;
+        }
+
+        try {
+            isUploading = true;
+            console.log('Starting upload for file:', file.name);
+            elements.uploadProgress?.classList.remove('hidden');
+
+            // Disable submit button to prevent multiple clicks
+            const submitBtn = forms.upload?.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Uploading...';
+            }
+
+            const result = await uploadReceipt(file);
+
+            showToast('Receipt uploaded and processed successfully!', 'success');
+            elements.uploadSection?.classList.add('hidden');
+
+            // Reset form and file input
+            forms.upload?.reset();
+            resetFileLabel();
+
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload & Process';
+            }
+
+            // Refresh the lists
+            await loadReceipts();
+            await loadRestaurants();
+        } catch (error) {
+            console.error('Upload error:', error);
+            showToast((error as Error).message, 'error');
+
+            // Re-enable submit button on error
+            const submitBtn = forms.upload?.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload & Process';
+            }
+        } finally {
+            isUploading = false;
+            elements.uploadProgress?.classList.add('hidden');
+        }
+    });
+
     // People step event listeners
     const addPersonBtn = document.getElementById('addPersonBtn');
     const continueToItemsBtn = document.getElementById('continueToItemsBtn');
@@ -2158,6 +2148,18 @@ document.addEventListener('DOMContentLoaded', () => {
     splitModal?.addEventListener('click', (e: Event) => {
         if (e.target === splitModal) {
             closeSplitModal();
+        }
+    });
+
+    // Receipt modal close handler
+    const receiptModalClose = document.querySelector('.close');
+    receiptModalClose?.addEventListener('click', () => {
+        elements.receiptModal?.classList.add('hidden');
+    });
+
+    elements.receiptModal?.addEventListener('click', (e: Event) => {
+        if (e.target === elements.receiptModal) {
+            elements.receiptModal.classList.add('hidden');
         }
     });
 
