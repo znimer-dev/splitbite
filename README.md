@@ -3,7 +3,6 @@
 **Smart receipt splitting that actually works.** Upload a receipt photo, automatically extract items, and split costs instantly with friends.
 
 ## 🚀 [Live Demo](https://splitbite-0e7k.onrender.com/)
-*allow up to 30 seconds for app to launch, might be sleeping*
 
 ## What I Built
 
