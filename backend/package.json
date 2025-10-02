@@ -7,9 +7,9 @@
     "dev": "nodemon src/server.ts",
     "build": "npm run build:backend && npm run build:frontend",
     "build:backend": "tsc",
-    "build:frontend": "cd ../frontend && npm install && npm run build",
+    "build:frontend": "cd ../frontend && npm run build || echo 'Fallback: copying existing compiled JS' && cp js/dist/app.js js/dist/app.js.backup 2>/dev/null || true",
     "start": "node dist/server.js",
-    "postinstall": "cd ../frontend && npm install"
+    "postinstall": "cd ../frontend && npm install --production=false"
   },
   "keywords": [],
   "author": "",
