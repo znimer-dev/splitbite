@@ -72,7 +72,8 @@ Splitting bills manually is tedious and error-prone. I wanted to create somethin
 - Integration with payment platforms (Venmo, PayPal)
 - More Splitting Options
 - Group expense tracking and analytics
-  
+- Multi-language receipt support
+- Enhanced OCR accuracy improvements
 
 ---
 
